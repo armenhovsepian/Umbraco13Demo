@@ -1,0 +1,74 @@
+﻿
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.RegisterLogin>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@using Microsoft.AspNetCore.Http
+@using Umbraco.Cms.Core.Web
+@using Umbraco.Cms.Core.Security
+@using Microsoft.AspNetCore.Identity
+@using Umbraco.Cms.Core.Services
+@inject SignInManager<MemberIdentityUser> SignInManager
+@inject UserManager<MemberIdentityUser> UserManager
+@inject IMemberManager MemberManager
+@inject IUserService UserService
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IUmbracoContextAccessor UmbracoContextAccessor
+@inject IBackOfficeSecurityAccessor BackOfficeSecurityAccessor
+
+
+
+@{
+    Layout = "Master.cshtml";
+
+    var isLoggedIn = MemberManager.IsLoggedIn();
+    var isLoggedInUser = SignInManager.IsSignedIn(User);
+
+    var user = HttpContextAccessor.HttpContext.User;
+    var userUmb = UmbracoContextAccessor;
+
+
+    var u = HttpContext.User.GetUmbracoUser(UserService);
+    
+}
+
+@if (isLoggedIn)
+{
+    var currentUser = await MemberManager.GetCurrentMemberAsync();
+    var roleOrGroupName = "Customer";
+    var isCustomer = UserManager.IsInRoleAsync(currentUser, roleOrGroupName);
+
+    <h4>Is in Role</h4>
+}else{
+
+@*     await SignInManager.PasswordSignInAsync("armen@legaldesk.dk", "7ROXlp(ZlY", true, false)
+ *@
+
+    var myMember = UserService.GetUserById(1056); // result = null
+    var myUser = UserService.GetUserById(-1); //
+
+    var backofficeUser = BackOfficeSecurityAccessor.BackOfficeSecurity.CurrentUser;
+
+
+    <h4>Is not in Role</h4>
+}
+
+
+
+
+@await Umbraco.RenderMacroAsync("Login")
+
+@await Umbraco.RenderMacroAsync("Register")
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
+    </li>
+    <li class="nav-item">
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+        </form>
+    </li>
+}
