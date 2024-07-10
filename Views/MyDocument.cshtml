@@ -1,0 +1,23 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.MyDocument>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+	Layout = null;
+	var d = Model.MyUploadField;
+}
+
+
+<p>dataTime: @Model.Value("myDateTime")</p>
+
+<p>textArea: @Model.Value("myTextArea")</p>
+
+<p>textBox: @Model.Value("myTextBox")</p>
+
+<p>trueFalse: @Model.Value("myTrueFalse")</p>
+
+<p>tags: @Model.Value("myTags")</p>
+
+<p>
+    @Model.Value("myUploadField")
+</p>
+
