@@ -1,4 +1,5 @@
-﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using Smidge.Models
+@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 
 <!DOCTYPE html>
@@ -7,8 +8,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Umbraco 13 Demo</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @{
+        SmidgeHelper.RequiresCss(new CssFile() { FilePath = "~/lib/bootstrap/dist/css/bootstrap.min.css" });
+        SmidgeHelper.RequiresCss(new CssFile() { FilePath = "~/css/site.css" });
+    }
+
+
+    @await SmidgeHelper.CssHereAsync(debug: true)
 </head>
 <body>
     <header>

@@ -1,5 +1,4 @@
-﻿
-@using Umbraco.Cms.Web.Common.PublishedModels;
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.RegisterLogin>
 @using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
 
@@ -8,14 +7,22 @@
 @using Umbraco.Cms.Core.Security
 @using Microsoft.AspNetCore.Identity
 @using Umbraco.Cms.Core.Services
+@using Umbraco.Cms.Core.Security
+@using Umbraco13Demo.Helpers
+
 @inject SignInManager<MemberIdentityUser> SignInManager
 @inject UserManager<MemberIdentityUser> UserManager
 @inject IMemberManager MemberManager
+@inject IMemberService MemberService
 @inject IUserService UserService
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IUmbracoContextAccessor UmbracoContextAccessor
-@inject IBackOfficeSecurityAccessor BackOfficeSecurityAccessor
+@inject IBackOfficeSecurityAccessor _backOfficeSecurityAccessor
 
+@inject UserManager<BackOfficeIdentityUser> BackOfficeUserManager
+
+
+@inject IBackofficeUserAccessor _backofficeUserAccessor
 
 
 @{
@@ -27,27 +34,30 @@
     var user = HttpContextAccessor.HttpContext.User;
     var userUmb = UmbracoContextAccessor;
 
-
-    var u = HttpContext.User.GetUmbracoUser(UserService);
-    
+    var d = HttpContextAccessor.HttpContext?.User;
+    // var u = HttpContextAccessor.HttpContext.User.GetUmbracoUser(UserService);
+    var currentUser = _backOfficeSecurityAccessor.BackOfficeSecurity?.CurrentUser;
+    var cu = _backofficeUserAccessor.BackofficeUser;
 }
 
 @if (isLoggedIn)
 {
-    var currentUser = await MemberManager.GetCurrentMemberAsync();
+    //var currentUser = await MemberManager.GetCurrentMemberAsync();
     var roleOrGroupName = "Customer";
-    var isCustomer = UserManager.IsInRoleAsync(currentUser, roleOrGroupName);
+    //var isCustomer = UserManager.IsInRoleAsync(currentUser, roleOrGroupName);
 
     <h4>Is in Role</h4>
-}else{
+}
+else
+{
 
-@*     await SignInManager.PasswordSignInAsync("armen@legaldesk.dk", "7ROXlp(ZlY", true, false)
+    @*     await SignInManager.PasswordSignInAsync("armen@legaldesk.dk", "7ROXlp(ZlY", true, false)
  *@
 
     var myMember = UserService.GetUserById(1056); // result = null
     var myUser = UserService.GetUserById(-1); //
 
-    var backofficeUser = BackOfficeSecurityAccessor.BackOfficeSecurity.CurrentUser;
+    var backofficeUser = _backOfficeSecurityAccessor.BackOfficeSecurity.CurrentUser;
 
 
     <h4>Is not in Role</h4>
@@ -59,6 +69,7 @@
 @await Umbraco.RenderMacroAsync("Login")
 
 @await Umbraco.RenderMacroAsync("Register")
+
 
 
 @if (SignInManager.IsSignedIn(User))
