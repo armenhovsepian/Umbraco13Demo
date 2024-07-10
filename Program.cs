@@ -1,3 +1,5 @@
+using Umbraco13Demo.Helpers;
+
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.CreateUmbracoBuilder()
@@ -12,11 +14,17 @@ builder.Services.AddControllersWithViews();
 
 //builder.Services.AddScoped(typeof(UserManager<MemberIdentityUser>));
 
+builder.Services.AddScoped<IBackofficeUserAccessor, BackofficeUserAccessor>();
+
 WebApplication app = builder.Build();
 
 await app.BootUmbracoAsync();
 
 app.UseHttpsRedirection();
+
+//IBackOfficeUserManager
+
+//IUmbracoUserManager
 
 app.UseUmbraco()
     .WithMiddleware(u =>
@@ -32,3 +40,6 @@ app.UseUmbraco()
     });
 
 await app.RunAsync();
+
+
+
