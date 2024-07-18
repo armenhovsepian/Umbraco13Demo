@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Logging;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
@@ -38,8 +39,21 @@ namespace Umbraco13Demo.Controllers
 
             var pTags = publishedContent.Value<IEnumerable<string>>("myTags");
 
+            //var myDocument3 = publishedContent.Simple<MyDocumentTemp>();
 
-            var myDocument = publishedContent.As<MyDocumentTemp>();
+            foreach (IPublishedProperty property in publishedContent.Properties)
+            {
+                var alias = property.Alias;
+                var type = property.PropertyType.DataType.EditorAlias;
+                var value = property.GetValue();
+
+                if (value != null)
+                {
+
+                }
+            }
+
+            var myDocument = publishedContent.MapTo<MyDocumentTemp>();
 
             return View(myDocument);
         }

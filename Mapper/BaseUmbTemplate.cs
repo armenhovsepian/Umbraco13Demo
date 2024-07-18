@@ -2,7 +2,10 @@
 {
     public class BaseUmbTemplate
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        [UmbAlias("Id")]
+        public int ContentId { get; set; }
+
+        [UmbAlias("Name")]
+        public string ContentName { get; set; }
     }
 }

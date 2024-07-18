@@ -70,7 +70,7 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.3.0+a325ba3")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("myDropDown")]
-		public virtual string MyDropDown => this.Value<string>(_publishedValueFallback, "myDropDown");
+		public virtual global::System.Collections.Generic.IEnumerable<string> MyDropDown => this.Value<global::System.Collections.Generic.IEnumerable<string>>(_publishedValueFallback, "myDropDown");
 
 		///<summary>
 		/// MyMediaPicker
@@ -134,5 +134,13 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
 		[ImplementPropertyType("myUploadField")]
 		public virtual string MyUploadField => this.Value<string>(_publishedValueFallback, "myUploadField");
+
+		///<summary>
+		/// Partners
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "13.3.0+a325ba3")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("partners")]
+		public virtual global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent> Partners => this.Value<global::System.Collections.Generic.IEnumerable<global::Umbraco.Cms.Core.Models.PublishedContent.IPublishedContent>>(_publishedValueFallback, "partners");
 	}
 }
