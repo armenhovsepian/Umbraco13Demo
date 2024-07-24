@@ -2,7 +2,7 @@
 
 namespace Umbraco13Demo.POCOs
 {
-    public class MyDocumentTemp : BaseUmbTemplate
+    public class MyDocumentTemp : PublishedContentModel
     {
         public MyDocumentTemp()
         {

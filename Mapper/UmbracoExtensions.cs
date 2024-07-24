@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Strings;
 
 namespace Umbraco13Demo.Mapper
 {
@@ -310,6 +311,139 @@ namespace Umbraco13Demo.Mapper
             return pi.PropertyType != typeof(string) && pi.PropertyType.IsArray;
         }
 
+
+        public static T Map<T>(this IPublishedContent content)
+        {
+            const string modelsNamespace = "Umbraco.Cms.Web.Common.PublishedModels";
+
+            var d = typeof(T);
+            var a = d.GetCustomAttribute<UmbContentType>();
+
+            if (a == null)
+            {
+                return default(T);
+            }
+
+            var contentTypeAlias = a.Alias;
+
+
+            //var typeName = typeof(Umbraco.Cms.Web.Common.PublishedModels.MyDocument);
+
+            // option 1
+            var obj = Activator.CreateInstance("Umbraco13Demo", $"{modelsNamespace}.{contentTypeAlias}",
+                true,
+                BindingFlags.Instance | BindingFlags.Public,
+                null,
+                new object[] { content, null },
+                null,
+                null);
+
+            // option 2
+            var asmObj = Assembly.GetExecutingAssembly();
+            var con = asmObj.CreateInstance($"{modelsNamespace}.{contentTypeAlias}", true, BindingFlags.Instance | BindingFlags.Public, null, new object[] { content, null }, null, null);
+
+            // Create an empty instance of the POCO
+            var poco = Activator.CreateInstance<T>();
+            PropertyInfo[] properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            foreach (PropertyInfo targetPropertyInfo in properties.Where(p => !Ignore(p)))
+            {
+                var propertyName = targetPropertyInfo.GetCustomAttribute<UmbAlias>()?.Alias ?? targetPropertyInfo.Name;
+
+                foreach (PropertyInfo sourcePropertyInfo in con.GetType().GetProperties())
+                {
+                    if (propertyName == sourcePropertyInfo.Name)
+                    {
+
+                        if (targetPropertyInfo.PropertyType == sourcePropertyInfo.PropertyType)
+                        {
+                            targetPropertyInfo.SetValue(poco, sourcePropertyInfo.GetValue(con));
+                            continue;
+                        }
+
+                        // tinyMCE
+                        else if (sourcePropertyInfo.PropertyType == typeof(IHtmlEncodedString))
+                        {
+                            var value = sourcePropertyInfo.GetValue(con);
+                            targetPropertyInfo.SetValue(poco, value.ToString());
+                            continue;
+                        }
+
+                        // Links
+                        else if (sourcePropertyInfo.PropertyType == typeof(IEnumerable<Link>))
+                        {
+                            var links = new List<string>();
+                            foreach (var entry in content.Value<IEnumerable<Link>>(propertyName))
+                            {
+                                links.Add(entry.Url);
+                            }
+
+                            targetPropertyInfo.SetValue(poco, links, null);
+                            continue;
+                        }
+
+                        else if (sourcePropertyInfo.PropertyType == typeof(Link))
+                        {
+                            var link = content.Value<Link>(propertyName).Url;
+                            targetPropertyInfo.SetValue(poco, link, null);
+                            continue;
+                        }
+
+                        // Media Picker
+                        else if (sourcePropertyInfo.PropertyType == typeof(IEnumerable<MediaWithCrops>))
+                        {
+                            var mediaUrls = new List<string>();
+                            foreach (var entry in content.Value<IEnumerable<MediaWithCrops>>(propertyName))
+                            {
+                                mediaUrls.Add(entry.MediaUrl());
+                            }
+
+                            targetPropertyInfo.SetValue(poco, mediaUrls, null);
+                            continue;
+                        }
+
+                        else if (sourcePropertyInfo.PropertyType == typeof(MediaWithCrops))
+                        {
+                            var mediaUrl = content.Value<MediaWithCrops>(propertyName).MediaUrl();
+                            targetPropertyInfo.SetValue(poco, mediaUrl);
+                            continue;
+                        }
+
+
+                        // Content Picker
+                        else if (sourcePropertyInfo.PropertyType == typeof(IPublishedContent))
+                        {
+                            var p = targetPropertyInfo.GetCustomAttribute<UmbContentType>();
+                            if (p != null)
+                            {
+
+                            }
+
+                            var propes = targetPropertyInfo.PropertyType.GetProperties();
+                            foreach (var prop in propes)
+                            {
+                                var value = prop.GetValue(sourcePropertyInfo.GetValue(con));
+                                targetPropertyInfo.SetValue(poco, value);
+                            }
+
+                            //var newProperty = Activator.CreateInstance(targetPropertyInfo.PropertyType);
+
+                            //var props = targetPropertyInfo.PropertyType.GetProperties();
+
+                            //targetPropertyInfo.SetValue(poco, newProperty);
+                            continue;
+                        }
+                        else if (sourcePropertyInfo.PropertyType == typeof(IEnumerable<IPublishedContent>))
+                        {
+                            continue;
+                        }
+
+                    }
+                }
+            }
+
+            return poco;
+        }
 
     }
 }

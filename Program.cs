@@ -1,4 +1,5 @@
 using Umbraco13Demo.Helpers;
+using Umbraco13Demo.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,7 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddScoped(typeof(UserManager<MemberIdentityUser>));
 
 builder.Services.AddScoped<IBackofficeUserAccessor, BackofficeUserAccessor>();
+builder.Services.AddScoped<IContentProvider, ContentProvider>();
 
 WebApplication app = builder.Build();
 

@@ -1,6 +1,6 @@
 ﻿namespace Umbraco13Demo.Mapper
 {
-    public class BaseUmbTemplate
+    public class PublishedContentModel
     {
         [UmbAlias("Id")]
         public int ContentId { get; set; }
