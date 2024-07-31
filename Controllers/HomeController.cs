@@ -79,5 +79,12 @@ namespace Umbraco13Demo.Controllers
 
             return View(myDocument);
         }
+
+
+
+        public IActionResult Chat()
+        {
+            return View();
+        }
     }
 }

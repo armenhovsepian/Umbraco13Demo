@@ -1,0 +1,31 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    Layout = "~/Views/Master.cshtml";
+}
+
+<link href="~/css/site.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="inputMessage" class="col-form-label">Messsage</label>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="inputMessage" class="form-control">
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary mb-2" id="btnSend">Send</button>
+        </div>
+    </div>
+</div>
+
+
+<div id="msgContainer"></div>
+
+
+@section Scripts
+{
+    <script src="/js/signalr\signalr.min.js"></script>
+    <script src="/js/notificationhub.js"></script>
+}

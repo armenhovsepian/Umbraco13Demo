@@ -1,4 +1,5 @@
 using Umbraco13Demo.Helpers;
+using Umbraco13Demo.Hubs;
 using Umbraco13Demo.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -11,12 +12,19 @@ builder.CreateUmbracoBuilder()
     .Build();
 
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddSignalR(option =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        option.EnableDetailedErrors = true;
+    }
+});
 
 //builder.Services.AddScoped(typeof(UserManager<MemberIdentityUser>));
 
 builder.Services.AddScoped<IBackofficeUserAccessor, BackofficeUserAccessor>();
 builder.Services.AddScoped<IContentProvider, ContentProvider>();
+builder.Services.AddSingleton<NotificationHub>();
 
 WebApplication app = builder.Build();
 
@@ -27,6 +35,8 @@ app.UseHttpsRedirection();
 //IBackOfficeUserManager
 
 //IUmbracoUserManager
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.UseUmbraco()
     .WithMiddleware(u =>
